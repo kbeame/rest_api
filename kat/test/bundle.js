@@ -45,11 +45,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	__webpack_require__(19);
-	__webpack_require__(21);
+	__webpack_require__(20);
 	__webpack_require__(22);
-	__webpack_require__(25);
-	__webpack_require__(28);
+	__webpack_require__(23);
+	__webpack_require__(26);
+	__webpack_require__(29);
 	
 	describe('does karma work?', () => {
 	  it('should work', () => {
@@ -66,8 +66,8 @@
 	const practiceApp = angular.module('practiceApp', []);
 	
 	__webpack_require__(4)(practiceApp);
-	__webpack_require__(6)(practiceApp);
-	__webpack_require__(13)(practiceApp);
+	__webpack_require__(7)(practiceApp);
+	__webpack_require__(14)(practiceApp);
 
 
 /***/ },
@@ -30957,6 +30957,7 @@
 
 	module.exports = function(app) {
 	  __webpack_require__(5)(app);
+	  __webpack_require__(6)(app);
 	};
 
 
@@ -30980,11 +30981,43 @@
 
 /***/ },
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	module.exports = function(app) {
-	  __webpack_require__(7)(app);
-	  __webpack_require__(10)(app);
+	  app.factory('kbResource', ['$http', 'totalErrorHandle', function($http, totalErrorHandle) {
+	    var Resource = function(resourceArray, errorArray, url) {
+	      this.data = resourceArray;
+	      this.url = url;
+	      this.errors = errorArray;
+	    };
+	    Resource.prototype.getAll = function() {
+	      return $http.get(this.url)
+	        .then((res) => {
+	          this.data.splice(0);
+	          for (var i = 0; i < res.data.length; i++) {
+	            this.data.push(res.data[i]);
+	          }
+	        }, totalErrorHandle(this.errors, 'could not fetch resource'));
+	    };
+	    Resource.prototype.create = function(resource) {
+	      return $http.post(this.url, resource)
+	      .then((res) => {
+	        this.data.push(res.data);
+	      }, totalErrorHandle(this.errors, 'could not create and save a new instance of resource'));
+	    };
+	    Resource.prototype.remove = function(resource) {
+	      $http.delete(this.url + '/' + resource._id, resource)
+	      .then(() => {
+	        this.data.splice(this.data.indexOf(resource), 1);
+	      }, totalErrorHandle(this.errors, 'could not delete an instance of the resource'));
+	    };
+	    Resource.prototype.update = function(resource) {
+	      debugger;
+	      return $http.put(this.url + '/' + resource._id, resource)
+	        .catch(totalErrorHandle(this.errors, 'could not update the resource'));
+	    };
+	    return Resource;
+	  }]);
 	};
 
 
@@ -30994,6 +31027,7 @@
 
 	module.exports = function(app) {
 	  __webpack_require__(8)(app);
+	  __webpack_require__(11)(app);
 	};
 
 
@@ -31001,48 +31035,52 @@
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var url = __webpack_require__(9).url;
 	module.exports = function(app) {
-	  app.controller('PetController', ['$http', 'totalErrorHandle',
-	  function($http, totalErrorHandle) {
+	  __webpack_require__(9)(app);
+	};
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var url = __webpack_require__(10).url;
+	module.exports = function(app) {
+	  app.controller('PetController', ['kbResource', function(Resource) {
 	    this.pet = [];
 	    this.errors = [];
+	    var remote = new Resource(this.pet, this.errors, url + '/api/pet');
 	
 	    this.getAll = function() {
-	      $http.get(url + '/api/pet')
-	      .then((res) => {
-	        this.pet = res.data;
-	      }, totalErrorHandle(this.errors, 'could not find pets'));
-	    }.bind(this);
+	      remote.getAll();
+	    };
 	
 	    this.createPet = function() {
-	      $http.post(url + '/api/pet', this.newPet)
-	      .then((res) => {
-	        this.pet.push(res.data);
+	      remote.create(this.newPet)
+	      .then(() => {
 	        this.newPet = null;
-	      }, totalErrorHandle(this.errors, 'could not adopt a new pet ' + this.newPet.name));
+	      });
 	    }.bind(this);
 	
-	    this.deletePet = function(pet) {
-	      $http.delete(url + '/api/pet/' + pet._id)
-	      .then(() => {
-	        this.pet.splice(this.pet.indexOf(pet), 1);
-	      }, totalErrorHandle(this.errors, 'could get rid of a pet ' + pet.name));
-	    }.bind(this);
+	    this.deletePet = function() {
+	      remote.remove();
+	    };
 	
 	    this.updatePet = function(pet) {
-	      $http.put(url + '/api/pet/' + pet._id, pet)
+	      debugger;
+	      remote.update(pet)
 	      .then(() => {
+	        debugger;
 	        pet.editing = false;
-	      }, totalErrorHandle(this.errors, 'could update a new pet ' + pet.name));
-	    }.bind(this);
+	      });
+	    };
 	
 	  }]);
 	};
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -31051,17 +31089,17 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
-	  __webpack_require__(11)(app);
 	  __webpack_require__(12)(app);
+	  __webpack_require__(13)(app);
 	};
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31084,7 +31122,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31113,21 +31151,12 @@
 
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(app) {
-	  __webpack_require__(14)(app);
-	  __webpack_require__(16)(app);
-	};
-
-
-/***/ },
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
 	  __webpack_require__(15)(app);
+	  __webpack_require__(17)(app);
 	};
 
 
@@ -31135,7 +31164,16 @@
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var url = __webpack_require__(9).url;
+	module.exports = function(app) {
+	  __webpack_require__(16)(app);
+	};
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var url = __webpack_require__(10).url;
 	module.exports = function(app) {
 	  app.controller('SandwichController', ['$http', 'totalErrorHandle',
 	  function($http, totalErrorHandle) {
@@ -31172,17 +31210,17 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
-	  __webpack_require__(17)(app);
 	  __webpack_require__(18)(app);
+	  __webpack_require__(19)(app);
 	};
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31205,7 +31243,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31234,11 +31272,11 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	__webpack_require__(20);
+	__webpack_require__(21);
 	
 	
 	describe('pet controller', function() { // eslint-disable-line prefer-arrow-callback
@@ -31312,7 +31350,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/**
@@ -34324,11 +34362,11 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	__webpack_require__(20);
+	__webpack_require__(21);
 	
 	
 	describe('sandwich controller', function() {
@@ -34402,13 +34440,13 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	var petFormTemplate = __webpack_require__(23);
-	var petListTemplate = __webpack_require__(24);
-	__webpack_require__(20);
+	var petFormTemplate = __webpack_require__(24);
+	var petListTemplate = __webpack_require__(25);
+	__webpack_require__(21);
 	
 	
 	describe('pet form directive', function() {
@@ -34448,25 +34486,25 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "<form data-ng-submit=\"save(pet)\">\n\n  <label for=\"name\">Name</label>\n  <input type=\"text\" name=\"name\" data-ng-model=\"pet.name\">\n\n  <label name=\"nickName\">nickName</label>\n  <input type=\"text\" name=\"nickName\" data-ng-model=\"pet.nickName\">\n\n\n  <label for=\"favoriteActivity\">favoriteActivity</label>\n  <input type=\"text\" name=\"favoriteActivity\" data-ng-model=\"pet.favoriteActivity\" placeholder=\"cuddles\">\n\n  <button type=\"submit\">{{buttonText}}</button>\n  <ng-transclude></ng-transclude>\n</form>\n";
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = "<li>\n  <ng-transclude></ng-transclude>\n  {{pet.name}} aka {{pet.nickName}} really likes {{pet.favoriteActivity}}\n  <button data-ng-if=\"!pet.editing\" data-ng-click=\"pet.editing = true\">Edit Pet</button>\n\n  <button data-ng-click=\"sell(pet)\">Remove a Pet</button>\n</li>\n";
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	var template = __webpack_require__(26);
-	var sandwichListTemplate = __webpack_require__(27);
-	__webpack_require__(20);
+	var template = __webpack_require__(27);
+	var sandwichListTemplate = __webpack_require__(28);
+	__webpack_require__(21);
 	
 	
 	describe('sandwich directives', function() {
@@ -34507,19 +34545,19 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "<form data-ng-submit=\"save(sandwich)\">\n\n  <label for=\"type\">Type</label>\n  <input type=\"text\" name=\"type\" data-ng-model=\"sandwich.type\">\n\n  <label name=\"ingrediants\">Ingrediants</label>\n  <input type=\"text\" name=\"ingrediants\" data-ng-model=\"sandwich.ingrediants\">\n\n\n  <label for=\"yumFactor\">yumFactor</label>\n  <input type=\"Number\" name=\"yumFactor\" data-ng-model=\"sandwich.yumFactor\">\n\n  <button type=\"submit\">{{buttonText}}</button>\n  <ng-transclude></ng-transclude>\n</form>\n";
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	module.exports = "<li>\n  <ng-transclude></ng-transclude>\n  {{sandwich.type}} needs {{sandwich.ingrediants}} and has a yum factor {{sandwich.yumFactor}}\n  <button data-ng-if=\"!sandwich.editing\" data-ng-click=\"sandwich.editing = true\">Improve Sandwich</button>\n\n  <button data-ng-click=\"eat(sandwich)\">Eat a Sandwich</button>\n</li>\n";
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const angular = __webpack_require__(2);
