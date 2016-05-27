@@ -16,15 +16,13 @@ module.exports = function(app) {
       });
     }.bind(this);
 
-    this.deletePet = function() {
-      remote.remove();
+    this.deletePet = function(pet) {
+      remote.removeResource(pet);
     };
 
     this.updatePet = function(pet) {
-      debugger;
       remote.update(pet)
       .then(() => {
-        debugger;
         pet.editing = false;
       });
     };

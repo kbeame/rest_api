@@ -1,34 +1,31 @@
-var url = require('../../config').url;
+var url = require('../../config.js').url;
 module.exports = function(app) {
-  app.controller('SandwichController', ['$http', 'totalErrorHandle',
-  function($http, totalErrorHandle) {
+  app.controller('SandwichController', ['kbResource', function(Resource) {
     this.sandwich = [];
     this.errors = [];
+    var remote = new Resource(this.sandwich, this.errors, url + '/api/sandwich');
 
-    this.getAll = function () {
-      $http.get(url + '/api/sandwich')
-      .then((res) => {
-        this.sandwich = res.data;
-      }, totalErrorHandle(this.errors, 'could not show sandwich options'));
-    }.bind(this);
-    this.createSandwich = function () {
-      $http.post(url + '/api/sandwich', this.newSandwich)
-      .then((res) => {
-        this.sandwich.push(res.data);
-        this.newSandwich = null;
-      }, totalErrorHandle(this.errors, 'could not make ' + this.newSandwich.type));
-    }.bind(this);
-    this.deleteSandwich = function(sandwich) {
-      $http.delete(url + '/api/sandwich/' + sandwich._id)
+    this.getAll = function() {
+      remote.getAll();
+    };
+
+    this.createSandwich = function() {
+      remote.create(this.newSandwich)
       .then(() => {
-        this.sandwich.splice(this.sandwich.indexOf(sandwich), 1);
-      }, totalErrorHandle(this.errors, 'could not eat ' + sandwich.type));
+        this.newSandwich = null;
+      });
     }.bind(this);
+
+    this.deleteSandwich = function(sandwich) {
+      remote.removeResource(sandwich);
+    };
+
     this.updateSandwich = function(sandwich) {
-      $http.put(url + '/api/sandwich/' + sandwich._id, sandwich)
+      remote.update(sandwich)
       .then(() => {
         sandwich.editing = false;
-      }, totalErrorHandle(this.errors, 'could not improve ' + sandwich.type));
-    }.bind(this);
+      });
+    };
+
   }]);
 };

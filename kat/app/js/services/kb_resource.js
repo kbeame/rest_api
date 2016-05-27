@@ -20,14 +20,13 @@ module.exports = function(app) {
         this.data.push(res.data);
       }, totalErrorHandle(this.errors, 'could not create and save a new instance of resource'));
     };
-    Resource.prototype.remove = function(resource) {
-      $http.delete(this.url + '/' + resource._id, resource)
-      .then(() => {
-        this.data.splice(this.data.indexOf(resource), 1);
-      }, totalErrorHandle(this.errors, 'could not delete an instance of the resource'));
+    Resource.prototype.removeResource = function(resource) {
+      return $http.delete(this.url + '/' + resource._id)
+        .then(() => {
+          this.data.splice(this.data.indexOf(resource), 1);
+        }, totalErrorHandle(this.errors, 'could not delete an instance of the resource'));
     };
     Resource.prototype.update = function(resource) {
-      debugger;
       return $http.put(this.url + '/' + resource._id, resource)
         .catch(totalErrorHandle(this.errors, 'could not update the resource'));
     };
