@@ -4,6 +4,7 @@ require('./sandwich_controller_test.js');
 require('./pet_directive_test.js');
 require('./sandwich_directive_test.js');
 require('./error_service_test.js');
+require('./kb_resource_test.js');
 
 describe('does karma work?', () => {
   it('should work', () => {
