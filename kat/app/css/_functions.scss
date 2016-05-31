@@ -1,0 +1,3 @@
+@function sunset($var) {
+  @return linear-gradient($var, $var * .70, $var * .50);
+}

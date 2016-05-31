@@ -1,5 +1,5 @@
 section {
-  background-color: $pumpkin;
+  background: sunset($pumpkin);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,10 +17,8 @@ ul {
 }
 button {
   @include border ($stem, $cream);
-  padding:5px;
   background-color: $cream;
-  padding: 1em;
-  margin: 1em;
+  @include spacing(1em);
   color: $stem;
   text-decoration: none;
   font-family: Tahoma, sans-serif;

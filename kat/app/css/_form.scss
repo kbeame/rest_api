@@ -13,8 +13,7 @@
 form {
   @include border ($stem, $cream);
   background-color: darken( $cream, 10% );
-  padding: 1em;
-  margin: 1em;
+  @include spacing(1em);
   color: lighten($stem, 20%);
   text-decoration: none;
   font-family: Tahoma, sans-serif;
