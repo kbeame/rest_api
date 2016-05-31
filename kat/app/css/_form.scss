@@ -1,8 +1,8 @@
-:-moz-placeholder {
+-moz-placeholder {
     color: $stem;
 }
 
-::-webkit-input-placeholder {
+-webkit-input-placeholder {
     color: $stem;
 }
 
@@ -12,11 +12,10 @@
 
 form {
   @include border ($stem, $cream);
-  background-color: $cream;
-  background-color: $cream;
+  background-color: darken( $cream, 10% );
   padding: 1em;
   margin: 1em;
-  color: $stem;
+  color: lighten($stem, 20%);
   text-decoration: none;
   font-family: Tahoma, sans-serif;
   input {
@@ -27,10 +26,10 @@ form {
   }
   label {
     font-family: Georgia, Times, "Times New Roman", serif;
-    color: $stem;
+    color: lighten($stem, 20%);
     text-shadow: 1px 1px black;
   }
   button {
-    background-color: $pumpkin;
+    background-color: darken( $pumpkin, 10% );
   }
 }

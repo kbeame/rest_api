@@ -6,6 +6,8 @@ section {
   align-items: center;
 }
 ul {
+  @extend section;
+  flex-wrap: wrap;
   li {
     color: $stem;
     font-family: 'Francois One', sans-serif;
