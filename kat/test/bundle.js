@@ -45,12 +45,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	__webpack_require__(20);
-	__webpack_require__(22);
+	__webpack_require__(21);
 	__webpack_require__(23);
-	__webpack_require__(26);
-	__webpack_require__(29);
+	__webpack_require__(24);
+	__webpack_require__(27);
 	__webpack_require__(30);
+	__webpack_require__(31);
 	
 	describe('does karma work?', () => {
 	  it('should work', () => {
@@ -67,8 +67,8 @@
 	const practiceApp = angular.module('practiceApp', []);
 	
 	__webpack_require__(4)(practiceApp);
-	__webpack_require__(7)(practiceApp);
-	__webpack_require__(14)(practiceApp);
+	__webpack_require__(8)(practiceApp);
+	__webpack_require__(15)(practiceApp);
 
 
 /***/ },
@@ -30959,6 +30959,7 @@
 	module.exports = function(app) {
 	  __webpack_require__(5)(app);
 	  __webpack_require__(6)(app);
+	  __webpack_require__(7)(app);
 	};
 
 
@@ -31023,12 +31024,49 @@
 
 /***/ },
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	module.exports = function(app) {
-	  __webpack_require__(8)(app);
-	  __webpack_require__(11)(app);
+	  app.factory('warPredictor', [function() {
+	    return {
+	      totalContendors: 0,
+	      addContendors: function() {
+	        this.totalContendors++;
+	      }
+	    };
+	  }]);
 	};
+	
+	//
+	// module.exports = function(app) {
+	//   app.factory('warPredictor', [function() {
+	//     return {
+	//       winner: { pet: false,
+	//                 sandwich: false
+	//               },
+	//       numPet: [],
+	//       numSand: [],
+	//       totalContendors: numSand.length + numPet.length,
+	//       prediction: function() {
+	//         if (numPet.length > numSand.length) {
+	//           return this.winner.pet = true;
+	//         }
+	//         return this.winner.sandwich = true;
+	//       }
+	//     };
+	//   }]);
+	// };
+	
+	
+	// module.exports = function(app) {
+	//   app.factory('warPredictor', function() {
+	//     var winner;
+	//     if (this.pet.length > this.sandwich.length) {
+	//       return winner.prediction = 'pets';
+	//     }
+	//     return winner.prediction = 'sandwiches';
+	//   });
+	// };
 
 
 /***/ },
@@ -31037,6 +31075,7 @@
 
 	module.exports = function(app) {
 	  __webpack_require__(9)(app);
+	  __webpack_require__(12)(app);
 	};
 
 
@@ -31044,10 +31083,25 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var url = __webpack_require__(10).url;
 	module.exports = function(app) {
-	  app.controller('PetController', ['kbResource', function(Resource) {
+	  __webpack_require__(10)(app);
+	};
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var url = __webpack_require__(11).url;
+	module.exports = function(app) {
+	  app.controller('PetController', ['kbResource', 'warPredictor', function(Resource, warPredictor) {
 	    this.pet = [];
+	    this.service = warPredictor;
+	    this.serviceAddContendors = warPredictor.addContendors.bind(warPredictor);
+	    this.totalContendors = 0;
+	    this.addContendors = function() {
+	      this.totalContendors++;
+	    };
 	    this.errors = [];
 	    var remote = new Resource(this.pet, this.errors, url + '/api/pet');
 	
@@ -31078,7 +31132,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -31087,17 +31141,17 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
-	  __webpack_require__(12)(app);
 	  __webpack_require__(13)(app);
+	  __webpack_require__(14)(app);
 	};
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31120,7 +31174,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31149,21 +31203,12 @@
 
 
 /***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(app) {
-	  __webpack_require__(15)(app);
-	  __webpack_require__(17)(app);
-	};
-
-
-/***/ },
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
 	  __webpack_require__(16)(app);
+	  __webpack_require__(18)(app);
 	};
 
 
@@ -31171,11 +31216,24 @@
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var url = __webpack_require__(10).url;
+	module.exports = function(app) {
+	  __webpack_require__(17)(app);
+	};
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var url = __webpack_require__(11).url;
 	module.exports = function(app) {
 	  app.controller('SandwichController', ['kbResource', function(Resource) {
 	    this.sandwich = [];
 	    this.errors = [];
+	    this.totalContendors = 0;
+	    this.addContendors = function() {
+	      this.totalContendors++;
+	    };
 	    var remote = new Resource(this.sandwich, this.errors, url + '/api/sandwich');
 	
 	    this.getAll = function() {
@@ -31205,17 +31263,17 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
-	  __webpack_require__(18)(app);
 	  __webpack_require__(19)(app);
+	  __webpack_require__(20)(app);
 	};
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31238,7 +31296,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = function(app) {
@@ -31267,11 +31325,11 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	__webpack_require__(21);
+	__webpack_require__(22);
 	
 	
 	describe('pet controller', function() { // eslint-disable-line prefer-arrow-callback
@@ -31345,7 +31403,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/**
@@ -34357,11 +34415,11 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	__webpack_require__(21);
+	__webpack_require__(22);
 	
 	
 	describe('sandwich controller', function() {
@@ -34435,13 +34493,13 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	var petFormTemplate = __webpack_require__(24);
-	var petListTemplate = __webpack_require__(25);
-	__webpack_require__(21);
+	var petFormTemplate = __webpack_require__(25);
+	var petListTemplate = __webpack_require__(26);
+	__webpack_require__(22);
 	
 	
 	describe('pet form directive', function() {
@@ -34481,25 +34539,25 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = "<form data-ng-submit=\"save(pet)\">\n\n  <label for=\"name\">Name</label>\n  <input type=\"text\" name=\"name\" data-ng-model=\"pet.name\">\n\n  <label name=\"nickName\">nickName</label>\n  <input type=\"text\" name=\"nickName\" data-ng-model=\"pet.nickName\">\n\n\n  <label for=\"favoriteActivity\">favoriteActivity</label>\n  <input type=\"text\" name=\"favoriteActivity\" data-ng-model=\"pet.favoriteActivity\" placeholder=\"cuddles\">\n\n  <button type=\"submit\">{{buttonText}}</button>\n  <ng-transclude></ng-transclude>\n</form>\n";
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = "<li>\n  <ng-transclude></ng-transclude>\n  {{pet.name}} aka {{pet.nickName}} really likes {{pet.favoriteActivity}}\n  <button data-ng-if=\"!pet.editing\" data-ng-click=\"pet.editing = true\">Edit Pet</button>\n\n  <button data-ng-click=\"sell(pet)\">Remove a Pet</button>\n</li>\n";
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	var template = __webpack_require__(27);
-	var sandwichListTemplate = __webpack_require__(28);
-	__webpack_require__(21);
+	var template = __webpack_require__(28);
+	var sandwichListTemplate = __webpack_require__(29);
+	__webpack_require__(22);
 	
 	
 	describe('sandwich directives', function() {
@@ -34540,19 +34598,19 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	module.exports = "<form data-ng-submit=\"save(sandwich)\">\n\n  <label for=\"type\">Type</label>\n  <input type=\"text\" name=\"type\" data-ng-model=\"sandwich.type\">\n\n  <label name=\"ingrediants\">Ingrediants</label>\n  <input type=\"text\" name=\"ingrediants\" data-ng-model=\"sandwich.ingrediants\">\n\n\n  <label for=\"yumFactor\">yumFactor</label>\n  <input type=\"Number\" name=\"yumFactor\" data-ng-model=\"sandwich.yumFactor\">\n\n  <button type=\"submit\">{{buttonText}}</button>\n  <ng-transclude></ng-transclude>\n</form>\n";
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	module.exports = "<li>\n  <ng-transclude></ng-transclude>\n  {{sandwich.type}} needs {{sandwich.ingrediants}} and has a yum factor {{sandwich.yumFactor}}\n  <button data-ng-if=\"!sandwich.editing\" data-ng-click=\"sandwich.editing = true\">Improve Sandwich</button>\n\n  <button data-ng-click=\"eat(sandwich)\">Eat a Sandwich</button>\n</li>\n";
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const angular = __webpack_require__(2);
@@ -34575,11 +34633,11 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var angular = __webpack_require__(2);
-	__webpack_require__(21);
+	__webpack_require__(22);
 	
 	describe('kbResource service', function() {
 	  var $httpBackend;

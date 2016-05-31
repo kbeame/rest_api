@@ -51,6 +51,18 @@
               </sandwich-form>
             </sandwich-list-item>
         </ul>
+
+        <article>
+          <h2>Predicting totals</h2>
+          <h3>sandwich count: {{sandwichcontrol.totalContendors}}</h3>
+          <button data-ng-click="sandwichcontrol.addContendors()">Add sandwich contendors</button>
+          <span data-ng-if="sandwichcontrol.totalContendors < 2 || sandwichcontrol.totalContendors > 2" data-ng-controller="PetController as petcontrol">
+            <h3>How many service contendors?: {{petcontrol.service.totalContendors}}</h3>
+            <h3 id="winnerBet">How many contendors?: {{petcontrol.totalContendors}}</h3>
+            <button data-ng-click="petcontrol.serviceAddContendors()">Add service contendors</button>
+            <button data-ng-click="petcontrol.addContendors()">Add pet contendors</button>
+          </span>
+        </article>
     </section>
     <script src="./bundle.js"></script>
   </body>

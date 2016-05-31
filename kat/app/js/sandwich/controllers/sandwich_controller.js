@@ -3,6 +3,10 @@ module.exports = function(app) {
   app.controller('SandwichController', ['kbResource', function(Resource) {
     this.sandwich = [];
     this.errors = [];
+    this.totalContendors = 0;
+    this.addContendors = function() {
+      this.totalContendors++;
+    };
     var remote = new Resource(this.sandwich, this.errors, url + '/api/sandwich');
 
     this.getAll = function() {
