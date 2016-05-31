@@ -8,6 +8,7 @@
 3. Run **gulp build** in the terminal to compile the necessary file content.
 4. Run **node server.js** to start the server.
 5. Run **node client_server.js** to start client-side server.
+6. In terminal run **mongod --dbpath=./db** to contect to mongoDB.
 6. Go to the browser
 **localhost:5000**
 You can there update remove and create pets and sandwiches.
