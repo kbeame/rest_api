@@ -51,4 +51,18 @@ describe('kbResource service', function() {
     expect(testArray.length).toBe(0);
     expect(errorTest.length).toBe(0);
   }));
+
+  it('should updtae an item from the test array', angular.mock.inject(function(kbResource, $q) {
+    var baseUrl = 'http://localhost:8000/api/pet';
+    var testItem = { name: 'test resource', _id: 1 };
+    var testArray = [testItem];
+    var errorTest = [];
+    var testRemote = new kbResource(testArray, errorTest, baseUrl);
+    $httpBackend.expectPUT('http://localhost:8000/api/pet/1', testItem).respond(200);
+    var result = testRemote.update(testItem);
+    $httpBackend.flush();
+
+    expect(testArray.length).toBe(1);
+    expect(result instanceof $q).toBe(true);
+  }));
 });
