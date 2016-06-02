@@ -63,7 +63,7 @@ describe('sandwich controller', function() {
     it('should delete a sandwich', function() {
       $httpBackend.expectDELETE('http://localhost:5555/api/sandwich/1')
         .respond(200);
-      sandwichcontrol.sandwich = [{ name: 'Tuna Melt', _id: 1 }];
+      sandwichcontrol.sandwich.push({ name: 'Tuna Melt', _id: 1 });
       sandwichcontrol.deleteSandwich(sandwichcontrol.sandwich[0]);
       $httpBackend.flush();
       expect(sandwichcontrol.sandwich.length).toBe(0);
