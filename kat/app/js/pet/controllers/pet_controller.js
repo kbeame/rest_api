@@ -1,13 +1,10 @@
 var url = require('../../config.js').url;
 module.exports = function(app) {
   app.controller('PetController', ['kbResource', 'warPredictor', function(Resource, warPredictor) {
-    this.pet = [];
     this.service = warPredictor;
-    this.serviceAddContendors = warPredictor.addContendors.bind(warPredictor);
-    this.totalContendors = 0;
-    this.addContendors = function() {
-      this.totalContendors++;
-    };
+    this.pet = warPredictor.numPet; // push to it instead
+    this.addPet = warPredictor.addPet.bind(warPredictor);
+    this.totalContendors = warPredictor.totalContendors;
     this.errors = [];
     var remote = new Resource(this.pet, this.errors, url + '/api/pet');
 

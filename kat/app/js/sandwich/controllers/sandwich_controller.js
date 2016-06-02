@@ -1,12 +1,11 @@
 var url = require('../../config.js').url;
 module.exports = function(app) {
-  app.controller('SandwichController', ['kbResource', function(Resource) {
-    this.sandwich = [];
+  app.controller('SandwichController', ['kbResource', 'warPredictor', function(Resource, warPredictor) {
+    this.service = warPredictor;
+    this.sandwich = warPredictor.numSand;
+    this.addSand = warPredictor.addSand.bind(warPredictor);
+    this.totalContendors = warPredictor.totalContendors;
     this.errors = [];
-    this.totalContendors = 0;
-    this.addContendors = function() {
-      this.totalContendors++;
-    };
     var remote = new Resource(this.sandwich, this.errors, url + '/api/sandwich');
 
     this.getAll = function() {

@@ -31029,33 +31029,51 @@
 	module.exports = function(app) {
 	  app.factory('warPredictor', [function() {
 	    return {
-	      totalContendors: 0,
-	      addContendors: function() {
-	        this.totalContendors++;
+	      numPet: [],
+	      numSand: [],
+	      totalContendors: numSand.length + numPet.length,
+	      addPet: function() {
+	        this.numPet.push(pet);
+	      },
+	      addSandwich: function() {
+	        this.numSand.push(sandwich);
 	      }
+	
 	    };
 	  }]);
 	};
 	
-	//
+	
 	// module.exports = function(app) {
 	//   app.factory('warPredictor', [function() {
 	//     return {
-	//       winner: { pet: false,
-	//                 sandwich: false
-	//               },
-	//       numPet: [],
-	//       numSand: [],
-	//       totalContendors: numSand.length + numPet.length,
-	//       prediction: function() {
-	//         if (numPet.length > numSand.length) {
-	//           return this.winner.pet = true;
-	//         }
-	//         return this.winner.sandwich = true;
+	//       totalContendors: 0,
+	//       addContendors: function() {
+	//         this.totalContendors++;
 	//       }
 	//     };
 	//   }]);
 	// };
+	
+	//
+	module.exports = function(app) {
+	  app.factory('warPredictor', [function() {
+	    return {
+	      winner: { pet: false,
+	                sandwich: false
+	              },
+	      numPet: [],
+	      numSand: [],
+	      totalContendors: numSand.length + numPet.length,
+	      prediction: function() {
+	        if (numPet.length > numSand.length) {
+	          return this.winner.pet = true;
+	        }
+	        return this.winner.sandwich = true;
+	      }
+	    };
+	  }]);
+	};
 	
 	
 	// module.exports = function(app) {
@@ -31095,13 +31113,10 @@
 	var url = __webpack_require__(11).url;
 	module.exports = function(app) {
 	  app.controller('PetController', ['kbResource', 'warPredictor', function(Resource, warPredictor) {
-	    this.pet = [];
 	    this.service = warPredictor;
-	    this.serviceAddContendors = warPredictor.addContendors.bind(warPredictor);
-	    this.totalContendors = 0;
-	    this.addContendors = function() {
-	      this.totalContendors++;
-	    };
+	    this.pet = warPredictor.numPet; // push to it instead
+	    this.addPet = warPredictor.addPet.bind(warPredictor);
+	    this.totalContendors = warPredictor.totalContendors;
 	    this.errors = [];
 	    var remote = new Resource(this.pet, this.errors, url + '/api/pet');
 	
@@ -31227,13 +31242,12 @@
 
 	var url = __webpack_require__(11).url;
 	module.exports = function(app) {
-	  app.controller('SandwichController', ['kbResource', function(Resource) {
-	    this.sandwich = [];
+	  app.controller('SandwichController', ['kbResource', 'warPredictor', function(Resource, warPredictor) {
+	    this.service = warPredictor;
+	    this.sandwich = warPredictor.numSand;
+	    this.addSand = warPredictor.addSand.bind(warPredictor);
+	    this.totalContendors = warPredictor.totalContendors;
 	    this.errors = [];
-	    this.totalContendors = 0;
-	    this.addContendors = function() {
-	      this.totalContendors++;
-	    };
 	    var remote = new Resource(this.sandwich, this.errors, url + '/api/sandwich');
 	
 	    this.getAll = function() {
